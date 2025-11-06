@@ -24,7 +24,7 @@ export default function CompleteProfile() {
 
     if (res.ok) {
       // Redirect to the new subdomain
-      window.location.href = `http://${username}.localhost:3000/`;
+      window.location.href = `https://${username}.mostasoft.com/`;
     } else {
       alert(data.error);
     }
