@@ -1,21 +1,17 @@
-import { NextResponse } from 'next/server';
+import { NextResponse } from "next/server";
 
 export function middleware(req) {
   const url = req.nextUrl.clone();
-  const host = req.headers.get('host') || '';
+  const host = req.headers.get("host") || "";
+  const hostname = host.split(":")[0];
+  const subdomain = hostname.split(".")[0];
 
-  // remove ports for production
-  const hostname = host.split(':')[0];
-  const subdomain = hostname.split('.')[0];
-
-  // Skip if main domain
-  if (['www', 'mostasoft'].includes(subdomain)) {
+  if (hostname === "localhost" || ["www", "mostasoft"].includes(subdomain)) {
     return NextResponse.next();
   }
 
-  // Redirect dynamic subdomain
-  if (subdomain && subdomain !== 'localhost') {
-    url.pathname = `/${subdomain}`;
+  if (subdomain && subdomain !== "localhost") {
+    url.pathname = `/${subdomain}${url.pathname}`;
     return NextResponse.rewrite(url);
   }
 
@@ -23,5 +19,5 @@ export function middleware(req) {
 }
 
 export const config = {
-  matcher: '/:path*',
+  matcher: ["/((?!_next/static|_next/image|favicon.ico).*)"],
 };

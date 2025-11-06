@@ -1,4 +1,5 @@
-import prisma from '@/lib/prisma';
+import prisma from "@/lib/prisma";
+import Link from "next/link";
 
 export default async function UserPage({ params }) {
   // ✅ Unwrap the params promise
@@ -22,6 +23,12 @@ export default async function UserPage({ params }) {
       <h2 className="text-2xl font-bold mb-2">Welcome dr {user.username}</h2>
       <p>Email: {user.email}</p>
       <p>Subdomain: {user.username}.localhost:3000</p>
+      <Link
+        href={`/${user.username}/dashboard`}
+        className="mt-4 inline-block bg-indigo-600 text-white px-4 py-2 rounded-xl hover:bg-indigo-700"
+      >
+        Go to Dashboard
+      </Link>
     </div>
   );
 }
