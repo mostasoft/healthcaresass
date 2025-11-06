@@ -3,14 +3,23 @@ import { NextResponse } from "next/server";
 export function middleware(req) {
   const url = req.nextUrl.clone();
   const host = req.headers.get("host") || "";
-  const hostname = host.split(":")[0];
-  const subdomain = hostname.split(".")[0];
 
-  if (hostname === "localhost" || ["www", "mostasoft"].includes(subdomain)) {
+  // extract hostname (no port)
+  const hostname = host.split(":")[0]; // e.g., "drjohn.mostasoft.com" or "drjohn.localhost"
+  const subdomain = hostname.split(".")[0]; // "drjohn"
+
+  // allow main domain and localhost without rewrite
+  if (
+    hostname === "localhost" ||
+    hostname === "mostasoft.com" ||
+    subdomain === "www"
+  ) {
     return NextResponse.next();
   }
 
+  // ✅ handle subdomains for both local and production
   if (subdomain && subdomain !== "localhost") {
+    // e.g. rewrite "/dashboard" → "/drjohn/dashboard"
     url.pathname = `/${subdomain}${url.pathname}`;
     return NextResponse.rewrite(url);
   }
@@ -18,6 +27,9 @@ export function middleware(req) {
   return NextResponse.next();
 }
 
+// ✅ Matcher: handle everything except static assets & API routes
 export const config = {
-  matcher: ["/((?!_next/static|_next/image|favicon.ico).*)"],
+  matcher: [
+    "/((?!_next/static|_next/image|favicon.ico|api).*)",
+  ],
 };
